@@ -1,3 +1,4 @@
+// Homework 17 react based web scrape mongo - server
 // Include Server Dependencies
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -13,7 +14,7 @@ var request = require("request");
 
 // Create Instance of Express
 var app = express();
-// Sets an initial port. We'll use this later in our listener
+// Sets the port
 var PORT = process.env.PORT || 3000;
 
 // Run Morgan for Logging
@@ -45,19 +46,17 @@ var arrayOfArticles = [];
 
 // -------------------------------------------------
 
-// Main "/" Route. This will redirect the user to our rendered React application
+// Main Route
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/public/index.html");
 });
 
-// This is the route we will send GET requests to retrieve our most recent search data.
-// We will call this route the moment our page gets rendered
+// route to scrape new articles
 app.get("/api", function(req, res) {
     console.log("we got the get/api do a scrape");
     // get the HTML body from the spin.com
     request("http://www.spin.com", function(error, response, html) {
       // Load into cheerio and save it to a variable
-      // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
       var $ = cheerio.load(html);
       // clear the array before we load new articles
       arrayOfArticles = [];
@@ -68,6 +67,7 @@ app.get("/api", function(req, res) {
         var title = $(element).children("a").text();
 
         // Save to an object and push an array
+        // the key will be used to reference the article
         arrayOfArticles.push({
           title: title,
           link: link,
@@ -79,27 +79,13 @@ app.get("/api", function(req, res) {
       console.log(arrayOfArticles);
       res.send(arrayOfArticles);
     });
-
-
-    // We will find all the records, sort it in descending order, then limit the records to 5
-    // Article.find({}).sort([
-    //   ["date", "descending"]
-    // ]).limit(5).exec(function(err, doc) {
-    //   if (err) {
-    //     console.log(err);
-    //   }
-    //   else {
-    //     res.send(doc);
-    //   }
-    // });
 });
 
-// This is the route we will send POST requests to save each search.
+// This route handles requests to save an article
 app.post("/api", function(req, res) {
   console.log("BODY: " + req.body.location);
 
-  // Here we'll save the location based on the JSON input.
-  // We'll use Date.now() to always get the current date time
+  // Save the article based using the index returned from the click
   Article.create({
     title: arrayOfArticles[req.body.location].title,
     link: arrayOfArticles[req.body.location].link,

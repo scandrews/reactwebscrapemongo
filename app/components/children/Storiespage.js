@@ -8,7 +8,7 @@ var Storiespage = React.createClass({
   handleButtonClick: function(event) {
     // var indexOfCurrentArticle = $( ".saveNews" ).index( this );
     event.preventDefault()
-    var indexOfCurrentArticle = this.data-reactid;
+    var indexOfCurrentArticle = React.findDOMNode(this.data-reactid);
     console.log("got the save click");
     console.log("value - ");
     console.log(indexOfCurrentArticle);
@@ -33,7 +33,7 @@ var Storiespage = React.createClass({
               return (
                 <div>
                   <form onSubmit={clickFunction} >
-                    <button className="btn btn-primary saveNews" type="submit">
+                    <button ref={i} className="btn btn-primary saveNews" type="submit">
                       Save
                     </button>
                     <p key={i}>{search.title}</p>

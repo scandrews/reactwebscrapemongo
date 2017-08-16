@@ -5,14 +5,13 @@ var React = require("react");
 var Form = require("./children/Startpage");
 var Article = require("./children/Storiespage");
 
-// Helper for making AJAX requests to our API
+// the routes will be in the helpers file
 var helpers = require("./utils/helpers");
 
 // Creating the Main component
 var Main = React.createClass({
 
-  // Here we set a generic state associated with the number of clicks
-  // Note how we added in this history state variable
+  // Set the initial state
   getInitialState: function() {
     return { searchTerm: "", results: "", history: [] };
   },
@@ -25,10 +24,10 @@ var Main = React.createClass({
   },
 
 
-  // The moment the page renders get the History
+  // on page load, get a set of scraped articles
   componentDidMount: function() {
-    // Get the latest history.
-    helpers.getHistory().then(function(response) {
+    helpers.getScrape().then(function(response) {
+      console.log("in main componentDidMount response");
       console.log(response);
       if (response !== this.state.history) {
         console.log("Article", response.data);
@@ -40,10 +39,6 @@ var Main = React.createClass({
   // If the component changes (i.e. if a search is entered)...
   componentDidUpdate: function() {
 
-    // Run the query for the address
-    // helpers.runQuery(this.state.searchTerm).then(function(data) {
-
-      // if (data !== this.state.results) {
         console.log("in main - component did update - index");
         console.log(this.state.searchTerm);
         // this.setState({ results: data });
