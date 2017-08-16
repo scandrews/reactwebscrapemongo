@@ -30,7 +30,7 @@ var helper = {
   },
 
   // This function posts new searches to our database.
-  postHistory: function(location) {
+  postIndexToSave: function(location) {
     return axios.post("/api", { location: location });
   }
 };

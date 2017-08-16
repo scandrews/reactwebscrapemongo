@@ -4,8 +4,8 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 
-// Require History Schema
-var History = require("./models/History");
+// Require Article Schema
+var Article = require("./models/Article");
 
 // for the scraper
 var cheerio = require("cheerio");
@@ -27,8 +27,8 @@ app.use(express.static("public"));
 
 // -------------------------------------------------
 
-// MongoDB Configuration configuration (Change this URL to your own DB)
-mongoose.connect("mongodb://admin:codingrocks@ds023664.mlab.com:23664/reactlocate");
+// MongoDB configuration
+mongoose.connect("mongodb://localhost/reactwebscrapemongoose");
 var db = mongoose.connection;
 
 db.on("error", function(err) {
@@ -59,7 +59,8 @@ app.get("/api", function(req, res) {
       // Load into cheerio and save it to a variable
       // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
       var $ = cheerio.load(html);
-
+      // clear the array before we load new articles
+      arrayOfArticles = [];
       // Select each element in the HTML body
       $(".preview-holder").each(function(i, element) {
 
@@ -69,7 +70,8 @@ app.get("/api", function(req, res) {
         // Save to an object and push an array
         arrayOfArticles.push({
           title: title,
-          link: link
+          link: link,
+          key: i
         });
       });
 
@@ -80,7 +82,7 @@ app.get("/api", function(req, res) {
 
 
     // We will find all the records, sort it in descending order, then limit the records to 5
-    // History.find({}).sort([
+    // Article.find({}).sort([
     //   ["date", "descending"]
     // ]).limit(5).exec(function(err, doc) {
     //   if (err) {
@@ -98,8 +100,9 @@ app.post("/api", function(req, res) {
 
   // Here we'll save the location based on the JSON input.
   // We'll use Date.now() to always get the current date time
-  History.create({
-    location: req.body.location,
+  Article.create({
+    title: arrayOfArticles[req.body.location].title,
+    link: arrayOfArticles[req.body.location].link,
     date: Date.now()
   }, function(err) {
     if (err) {

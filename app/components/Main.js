@@ -1,10 +1,9 @@
 // Include React
 var React = require("react");
 
-// Here we include all of the sub-components
+// Include the children
 var Form = require("./children/Startpage");
-// var Results = require("./children/Results");
-var History = require("./children/Storiespage");
+var Article = require("./children/Storiespage");
 
 // Helper for making AJAX requests to our API
 var helpers = require("./utils/helpers");
@@ -20,7 +19,7 @@ var Main = React.createClass({
 
   // let's take a shot at getting the save click
   componentGotSave: function() {
-    this.setIndex({ History: indexOfCurrentArticle})
+    this.setTerm({ Article: indexOfCurrentArticle})
     console.log("in Main componentGotSave index of current -");
     console.log(indexOfCurrentArticle);
   },
@@ -32,7 +31,7 @@ var Main = React.createClass({
     helpers.getHistory().then(function(response) {
       console.log(response);
       if (response !== this.state.history) {
-        console.log("History", response.data);
+        console.log("Article", response.data);
         this.setState({ history: response.data });
       }
     }.bind(this));
@@ -42,27 +41,29 @@ var Main = React.createClass({
   componentDidUpdate: function() {
 
     // Run the query for the address
-    helpers.runQuery(this.state.searchTerm).then(function(data) {
-      if (data !== this.state.results) {
-        console.log("Address", data);
-        this.setState({ results: data });
+    // helpers.runQuery(this.state.searchTerm).then(function(data) {
+
+      // if (data !== this.state.results) {
+        console.log("in main - component did update - index");
+        console.log(this.state.searchTerm);
+        // this.setState({ results: data });
 
         // After we've received the result... then post the search term to our history.
-        helpers.postHistory(this.state.searchTerm).then(function() {
+        helpers.postIndexToSave(this.state.searchTerm).then(function() {
           console.log("Updated!");
 
           // After we've done the post... then get the updated history
           helpers.getHistory().then(function(response) {
-            console.log("Current History", response.data);
+            console.log("Current Article", response.data);
 
-            console.log("my new History", response.data);
+            console.log("my new Article", response.data);
 
             this.setState({ history: response.data });
 
           }.bind(this));
         }.bind(this));
-      }
-    }.bind(this));
+    //   }
+    // }.bind(this));
   },
   // This function allows childrens to update the parent.
   setTerm: function(term) {
@@ -86,7 +87,7 @@ var Main = React.createClass({
         </div>
 
         <div className="row">
-          <History history={this.state.history} />
+          <Article history={this.state.history} />
         </div>
 
       </div>
