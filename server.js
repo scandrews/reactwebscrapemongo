@@ -83,12 +83,13 @@ app.get("/api", function(req, res) {
 
 // This route handles requests to save an article
 app.post("/api", function(req, res) {
-  console.log("BODY: " + req.body.location);
+  console.log("BODY: ");
+  console.log(req.body.articleIndex);
 
   // Save the article based using the index returned from the click
   Article.create({
-    title: arrayOfArticles[req.body.location].title,
-    link: arrayOfArticles[req.body.location].link,
+    title: arrayOfArticles[req.body.articleIndex].title,
+    link: arrayOfArticles[req.body.articleIndex].link,
     date: Date.now()
   }, function(err) {
     if (err) {
@@ -99,6 +100,47 @@ app.post("/api", function(req, res) {
     }
   });
 });
+
+
+  // var newArticle = new Article(req.body);
+  // newArticle.save(function(err, doc){
+  //   if (err) {
+  //     console.log(err);
+  //   }else {
+  //     res.send(doc);
+  //   }
+  // })
+
+// This route gets the saved articles
+app.get("/saved", function(req, res){
+  Article.find({ }, function(err, articles) {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      res.send(articles);
+    };
+  });
+});
+
+// this route deletes an article apecified by id
+app.post("/delete", function(req, res){
+  console.log("here in the delete route");
+  console.log(req.body);
+  Article.findByIdAndRemove( req.body.deleteIndex, function(err){
+    if (err) {
+      console.log(err);
+    }
+    else {
+      res.send("deleted the article");
+    };
+  })
+});
+
+app.get("*", function(req, res){
+  res.senFile(__dirname)
+});
+
 
 // -------------------------------------------------
 
