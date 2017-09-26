@@ -28,8 +28,12 @@ app.use(express.static("public"));
 
 // -------------------------------------------------
 
+
 // MongoDB configuration
-mongoose.connect("mongodb://localhost/reactwebscrapemongoose");
+// mongoose.connect("mongodb://localhost/reactwebscrapemongoose");
+
+mongoose.connect("mongodb://heroku_s996b6xz:772kikq8l69079rp7tm7aq0dr5@ds149134.mlab.com:49134/heroku_s996b6xz");
+
 var db = mongoose.connection;
 
 db.on("error", function(err) {
